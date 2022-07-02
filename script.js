@@ -1,9 +1,7 @@
 async function handleData() {
   let data = await d3.csv('2019.csv')
 
-  // data = data.filter((prev, curr) => {
-    
-  // }, data)
+  const margin = {top: 10, right: 30, bottom: 30, left: 60}
 
   const GDPPCextent = d3.extent(data, d => parseFloat(d.GDPPC))
   console.log(GDPPCextent)
@@ -17,12 +15,18 @@ async function handleData() {
     .domain(scoreExtents)
     .range([500, 0])
 
+  // // line generator
+  // const linegen = d3.line()
+  // .x(d => xscale(d.GDPPC))
+  // .y(d => yscale(d.score))
+  // .curve(d3.curveLinear)
 
   const svg = d3
   .select('#svg')
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
 
-  const graph = svg
-    .append('g')
 
   //   // line generator
   // const linegen = d3.line() // create a line generator
@@ -37,6 +41,10 @@ async function handleData() {
   // .attr('stroke', 'cornflowerblue')
   // .attr('fill', 'none')
 
+  const bottomAxis = d3.axisBottom(xscale)
+  const leftAxis = d3.axisLeft(yscale)
+
+ 
   // Scatter plot
   svg
   .append('g')
@@ -46,8 +54,21 @@ async function handleData() {
   .append('circle')
   .attr('cx', d => xscale(parseFloat(d.GDPPC)))
   .attr('cy', d => yscale(parseFloat(d.score)))
-  .attr('r', 3)
+  .attr('r', 8)
   .style('fill', '#003800')
+  .style('opacity', 0.3)
+
+  svg
+  .append('g')
+  // Position the group
+  .attr('transform', `translate(0, 500)`)
+  // generate the axis in the group
+  .call(bottomAxis)
+
+svg
+  .append('g')
+  .attr('transform', `translate(0, 0)`)
+  .call(leftAxis)
 
 }
 
