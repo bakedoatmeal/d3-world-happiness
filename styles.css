@@ -11,3 +11,16 @@ body, html {
 #svg {
   border: 1px solid;
 }
+
+button {
+  padding: 8px;
+  background-color: #003800;
+  color: beige;
+  border-radius: 4px;
+  margin: 3px;
+  border: none;
+}
+
+btn-group {
+  display: flex;
+}

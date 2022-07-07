@@ -1,12 +1,16 @@
-async function handleData() {
+async function handleData(property) {
+  d3.select("svg")
+    .selectAll("*")
+    .remove();
+
   let data = await d3.csv('2019.csv')
 
   const margin = {top: 10, right: 30, bottom: 30, left: 60}
 
-  const GDPPCextent = d3.extent(data, d => parseFloat(d.GDPPC))
-  console.log(GDPPCextent)
+  const variableExtent = d3.extent(data, d => parseFloat(d[property]))
+  console.log(variableExtent)
   const xscale = d3.scaleLinear()
-    .domain(GDPPCextent) // number of values
+    .domain(variableExtent) // number of values
     .range([0, 1000]) // width of #svg
 
   const scoreExtents = d3.extent(data, d => parseFloat(d.score))
@@ -24,7 +28,6 @@ async function handleData() {
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
-
   var mouseover = function(d) {
     tooltip
       .style("opacity", 1)
@@ -32,7 +35,7 @@ async function handleData() {
 
   var mousemove = function(e, data) {
     tooltip
-      .html( `Country: ${data.region}<br>Happiness Score: ${data.score}<br>GDP per Capita: ${data.GDPPC}`)
+      .html( `Country: ${data.region}<br>Happiness Score: ${data.score}<br>${property}: ${data[property]}`)
       .style("left", `${d3.pointer(e)[0]}px`) // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
       .style("top",  `${d3.pointer(e)[1]+150}px`)
   }
@@ -45,11 +48,9 @@ async function handleData() {
       .style("opacity", 0)
   }
 
-
   const bottomAxis = d3.axisBottom(xscale)
   const leftAxis = d3.axisLeft(yscale)
 
- 
   // Scatter plot
   svg
   .append('g')
@@ -57,7 +58,7 @@ async function handleData() {
   .data(data)
   .enter()
   .append('circle')
-    .attr('cx', d => xscale(parseFloat(d.GDPPC)))
+    .attr('cx', d => xscale(parseFloat(d[property])))
     .attr('cy', d => yscale(parseFloat(d.score)))
     .attr('r', 8)
     .style('fill', '#003800')
@@ -91,4 +92,14 @@ svg
 
 }
 
-handleData()
+const gddpcButton = document.getElementById('gddpc').addEventListener('click', () => {
+  handleData('GDPPC')
+})
+const socialButton = document.getElementById('social_support').addEventListener('click', () => {
+  handleData('social_support')
+})
+const lifeExpectancyButton = document.getElementById('life_expectancy').addEventListener('click', () => {
+  handleData('healthy_life_expectancy')
+})
+
+handleData('social_support')
