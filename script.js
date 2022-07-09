@@ -1,7 +1,5 @@
-async function handleData(property) {
-  d3.select("svg")
-    .selectAll("*")
-    .remove();
+async function handleData(property, svgLocation) {
+  d3.selectAll("svg").remove()
 
   let data = await d3.csv('2019.csv')
 
@@ -20,14 +18,14 @@ async function handleData(property) {
     .range([500, 0])
 
   const svg = d3
-  .select('#svg')
+  .select(svgLocation)
   .append('svg')
     .attr('width', 1090)
     .attr('height', 540)
   .append("g")
     .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
-
+          "translate(" + margin.left + "," + margin.top + ")")
+        
   var mouseover = function(d) {
     tooltip
       .style("opacity", 1)
@@ -79,7 +77,7 @@ svg
   .attr('transform', `translate(0, 0)`)
   .call(leftAxis)
 
-  var tooltip = d3.select("#svg")
+  var tooltip = d3.select(svgLocation)
   .append("div")
   .style("opacity", 0)
   .attr("class", "tooltip")
@@ -92,14 +90,21 @@ svg
 
 }
 
+const title = document.getElementById('title')
+
 const gddpcButton = document.getElementById('gddpc').addEventListener('click', () => {
-  handleData('GDPPC')
+  handleData('GDPPC', '#svg')
+  title.innerHTML ='Happiness Score based on GDP per Capita' 
 })
 const socialButton = document.getElementById('social_support').addEventListener('click', () => {
-  handleData('social_support')
+  handleData('social_support', '#svg')
+  title.innerHTML ='Happiness Score based on Social Support'
 })
 const lifeExpectancyButton = document.getElementById('life_expectancy').addEventListener('click', () => {
-  handleData('healthy_life_expectancy')
+  handleData('healthy_life_expectancy', '#svg')
+  title.innerHTML ='Happiness Score based on Life Expectancy'
 })
 
-handleData('social_support')
+handleData('GDPPC', '#svg')
+// handleData('social_support', '#svg')
+// handleData('healthy_life_expectancy', '#svg')
